@@ -12,7 +12,7 @@ var del = require('del');
 var notify = require('gulp-notify');
 var sourcemaps = require('gulp-sourcemaps');
 var runSequence = require('run-sequence');
-var jshint = require('gulp-jshint');
+var lint = require('gulp-jshint');
 
 //LOG ERROR
 function errorlog(err){
@@ -36,11 +36,18 @@ gulp.task('sass', function () {
     })) 
 });
 
+//JS LINTING
+gulp.task('lint', function () {
+  return gulp.src('app/js/**/*.js')
+    .pipe(lint())
+    .pipe(lint.reporter('jshint-stylish'));
+})
+
 //WATCH TASK
-gulp.task('watch', ['browserSync', 'sass'], function(){
+gulp.task('watch', ['browserSync', 'sass', 'lint'], function(){
   gulp.watch('app/scss/**/*.scss', ['sass']); 
   gulp.watch('app/*.html', browserSync.reload);
-  gulp.watch('app/js/**/*.js', browserSync.reload);
+  gulp.watch('app/js/**/*.js', ['lint', browserSync.reload]);
 });
 
 //BROWSERSYNC TASK
